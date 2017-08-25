@@ -6,7 +6,7 @@ import org.gafis.utils.Constant
 import org.slf4j.LoggerFactory
 
 /**
- * Hello world!
+ * start App
  *
  */
 object App extends ServerSupport{
