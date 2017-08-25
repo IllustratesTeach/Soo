@@ -12,13 +12,13 @@ import org.gafis.service.DatabaseService
   */
 class Start {
   @Inject
-  private val request:Request= _
+  private var request:Request= _
 
   @Inject
-  private val databaseService:DatabaseService = _
+  private var databaseService:DatabaseService = _
 
   @Inject
-  private val response:Response= _
+  private var response:Response= _
 
   def onActivate = {
     val jSONArray = new JSONArray()
