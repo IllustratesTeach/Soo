@@ -1,13 +1,14 @@
 package org.gafis.utils
 
+import java.io.DataOutputStream
+import java.net.{HttpURLConnection, URL}
 import java.util
 import java.util.concurrent.CountDownLatch
 
-import org.apache.commons.httpclient.methods.RequestEntity
-import org.apache.http.{Consts, HttpEntity, HttpResponse, NameValuePair}
+import org.apache.http.{Consts, HttpResponse, NameValuePair}
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.client.methods.{HttpGet, HttpPost}
+import org.apache.http.client.methods.{HttpGet, HttpPost, HttpPut}
 import org.apache.http.concurrent.FutureCallback
 import org.apache.http.impl.nio.client.HttpAsyncClients
 import org.apache.http.util.EntityUtils
