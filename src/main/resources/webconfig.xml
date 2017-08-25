@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<webConfig>
+    <bind>127.0.0.1:8090</bind>
+    <database>
+        <driver>org.h2.Driver</driver>
+        <user>sa</user>
+        <password>sa</password>
+        <url>jdbc:h2:~/soo</url>
+    </database>
+    <!--<database>
+        <driver>oracle.jdbc.driver.OracleDriver</driver>
+        <user>afis</user>
+        <password>helloafis</password>
+        <url>jdbc:oracle:thin:@192.168.1.17:1521:oragafis6</url>
+    </database>-->
+</webConfig>
