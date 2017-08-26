@@ -8,7 +8,13 @@ package org.gafis.service.elasticsearch
   */
 trait ManageIndexService {
 
-    def createOrUpdateIndex(indexName:String,tableName:String,jsonStr:String): Unit
+    def createIndex(indexName:String):Unit
 
-    def deleteIndex(indexName:String,tableName:String,jsonStr:String): Unit
+    def putDataToIndex(indexName:String,tableName:String,jsonStr:String): Unit
+
+    def deleteIndex(indexName:String,tableName:String): Unit
+
+    def searchIndex(indexName:String):Unit
+
+    def query(indexName:String,jsonStr:String):Unit
 }

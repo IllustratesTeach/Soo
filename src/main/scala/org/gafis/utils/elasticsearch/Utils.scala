@@ -1,9 +1,11 @@
 package org.gafis.utils.elasticsearch
 
 
-import java.io.DataOutputStream
-import java.net.{HttpURLConnection, URL}
-
+import java.nio.charset.Charset
+import org.apache.http.client.methods.{HttpDelete, HttpGet, HttpPost, HttpPut}
+import org.apache.http.entity.StringEntity
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.util.EntityUtils
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.search.builder.SearchSourceBuilder
 
@@ -12,31 +14,57 @@ import org.elasticsearch.search.builder.SearchSourceBuilder
   */
 object Utils {
 
-    def buildESQueryParamByAPI(queryBuilder:QueryBuilder): Unit ={
+    def buildESQueryParamByAPI(queryBuilder:QueryBuilder): String ={
       val searchSourceBuilder = new SearchSourceBuilder()
       searchSourceBuilder.query(queryBuilder).toString
     }
 
-    def restClient(url:String,jsonParams:String): Unit ={
-      val url = new URL(url)
-      val conn = url.openConnection.asInstanceOf[HttpURLConnection]
-      var wr:DataOutputStream = null
-      try{
-        conn.setRequestMethod("PUT")
-        conn.setRequestProperty("Content-Type","application/json")
-        conn.setRequestProperty("Content-Length",jsonParams.getBytes.length.toString)
-        conn.setRequestProperty("Content-Language","en-US")
-        conn.setUseCaches(false)
-        conn.setDoInput(true)
-        wr = new DataOutputStream(conn.getOutputStream)
-        wr.writeBytes(jsonParams)
-        if(conn.getResponseCode != 200){
-          throw new RuntimeException("request Failed,HTTP error code:" + conn.getResponseCode)
-        }
-      }finally {
-        if(null != wr)wr.close
-        if(null != conn)conn.disconnect
-      }
-
+    def restClient_putDataToIndex(uri:String,jsonParams:String): String ={
+      val  httpClient =  new DefaultHttpClient()
+      val method = new HttpPost(uri)
+      method.addHeader("Content-type","application/json; charset=utf-8")
+      method.setHeader("Accept", "application/json")
+      method.setEntity(new StringEntity(jsonParams, Charset.forName("UTF-8")))
+      val response = httpClient.execute(method)
+      EntityUtils.toString(response.getEntity())
     }
+
+  def restClient_createIndex(uri:String,jsonParams:String): String ={
+    val  httpClient =  new DefaultHttpClient()
+    val method = new HttpPut(uri)
+    method.addHeader("Content-type","application/json; charset=utf-8")
+    method.setHeader("Accept", "application/json")
+    method.setEntity(new StringEntity(jsonParams, Charset.forName("UTF-8")))
+    val response = httpClient.execute(method)
+    EntityUtils.toString(response.getEntity())
+  }
+
+  def restClient_delIndex(uri:String): String ={
+    val  httpClient =  new DefaultHttpClient()
+    val method = new HttpDelete(uri)
+    method.addHeader("Content-type","application/json; charset=utf-8")
+    method.setHeader("Accept", "application/json")
+    val response = httpClient.execute(method)
+    EntityUtils.toString(response.getEntity())
+  }
+
+  def restClient_searchIndex(uri:String): String ={
+    val  httpClient =  new DefaultHttpClient()
+    val method = new HttpGet(uri)
+    method.addHeader("Content-type","application/json; charset=utf-8")
+    method.setHeader("Accept", "application/json")
+    val response = httpClient.execute(method)
+    EntityUtils.toString(response.getEntity())
+  }
+
+  def restClient_query(uri:String,jsonParams:String):String ={
+    val  httpClient =  new DefaultHttpClient()
+    val method = new HttpPost(uri)
+    method.addHeader("Content-type","application/json; charset=utf-8")
+    method.setHeader("Accept", "application/json")
+    val response = httpClient.execute(method)
+    method.setEntity(new StringEntity(jsonParams, Charset.forName("UTF-8")))
+    EntityUtils.toString(response.getEntity())
+  }
+
 }

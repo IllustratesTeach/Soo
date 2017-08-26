@@ -4,10 +4,11 @@ import javax.persistence.EntityManagerFactory
 
 import org.apache.tapestry5.ioc.{Registry, RegistryBuilder, ServiceBinder}
 import org.gafis.internal.DatabaseServiceImpl
+import org.gafis.internal.elasticsearch.{DataAccessServiceImpl, ManageIndexServiceImpl}
 import org.gafis.service.DatabaseService
+import org.gafis.service.elasticsearch.{DataAccessService, ManageIndexService}
 import org.gafis.utils.Constant
-import org.junit.{Before}
-
+import org.junit.Before
 
 import scala.reflect.{ClassTag, classTag}
 
@@ -39,6 +40,8 @@ object TestModule{
 
   def bind(binder: ServiceBinder): Unit = {
     binder.bind(classOf[DatabaseService],classOf[DatabaseServiceImpl])
+    binder.bind(classOf[DataAccessService],classOf[DataAccessServiceImpl])
+    binder.bind(classOf[ManageIndexService],classOf[ManageIndexServiceImpl])
   }
 
 }

@@ -31,7 +31,7 @@ class DatabaseServiceImpl(implicit val dataSource: DataSource) extends DatabaseS
 
   override def save(conn:Connection): Int = {
     var flag = -1
-    val sql1 = "insert into TEST_PERSON (ID,NAME,MEMO) values (6,'wangwu6','memo')"
+    val sql1 = "insert into TEST_PERSON (ID,NAME,MEMO) values (7,'wangwu7','memo')"
     var ps:PreparedStatement = null
     try{
       ps = conn.prepareStatement(sql1)
@@ -48,7 +48,7 @@ class DatabaseServiceImpl(implicit val dataSource: DataSource) extends DatabaseS
   override def update(conn:Connection): Int = {
     var flag = -1
 
-    val sql2 = "update TEST_PERSON set name='lisi1' where id=10"
+    val sql2 = "update TEST_PERSON set name='lisi1' where id=5"
     var ps:PreparedStatement = null
     try{
       ps = conn.prepareStatement(sql2)
