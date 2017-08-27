@@ -3,7 +3,6 @@ package org.gafis.internal.elasticsearch
 import org.apache.tapestry5.json.JSONObject
 import org.gafis.service.elasticsearch.{DataAccessService, ManageIndexService}
 import org.gafis.utils.JsonUtil
-import org.gafis.utils.elasticsearch.Utils
 import org.gafis.utils.elasticsearch.Utils.CallFactory
 
 /**

@@ -46,6 +46,7 @@ object Utils {
         case GET => httpRequestBase = new HttpGet(uri)
         case DELETE => httpRequestBase = new HttpDelete(uri)
         case POST => httpRequestBase = new HttpPost(uri)
+        case _ => throw new Exception("request method error:" + requestType)
       }
 
       httpRequestBase.addHeader("Content-type","application/json; charset=utf-8")
