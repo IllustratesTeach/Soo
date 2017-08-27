@@ -13,10 +13,12 @@ class ManageIndexServiceImpl(dataAccessService: DataAccessService) extends Manag
   private final val URL = "http://localhost:9200"
 
   override def putDataToIndex(indexName: String, tableName: String, jsonStr: String): Unit = {
-    val httpAddress = URL + "/" + indexName + "/" + tableName +"?pretty"
+
+    var httpAddress = ""
     dataAccessService.getDataFromDataBase.foreach{
       t =>
-        val str = CallFactory.call(CallFactory.POST,httpAddress,JsonUtil.mapToJSONStr(t))
+        httpAddress = URL + "/" + indexName + "/" + tableName + "/" + t.get("ID").get.toString +"?pretty"
+        val str = CallFactory.call(CallFactory.PUT,httpAddress,JsonUtil.mapToJSONStr(t))
         println(str)
     }
   }
@@ -58,7 +60,7 @@ class ManageIndexServiceImpl(dataAccessService: DataAccessService) extends Manag
   }
 
   override def updateDataToIndex(indexName: String, tableName: String): Unit = {
-    val httpAddress = URL + "/" + indexName + "/" + tableName +"/AV4j7QEcvYUFXBFiUNBh"
+    val httpAddress = URL + "/" + indexName + "/" + tableName +"/4"
     CallFactory.call(CallFactory.PUT,httpAddress,JsonUtil.mapToJSONStr(dataAccessService.getOneRecord))
   }
 }

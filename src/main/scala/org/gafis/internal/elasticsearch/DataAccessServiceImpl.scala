@@ -34,7 +34,7 @@ class DataAccessServiceImpl(implicit val dataSource: DataSource) extends DataAcc
 
   override def getOneRecord(): mutable.HashMap[String, Any] = {
 
-    val sql = "SELECT * FROM TEST_PERSON WHERE ID = 3"
+    val sql = "SELECT * FROM TEST_PERSON WHERE ID = 2"
     val conn = dataSource.getConnection
     val st = conn.prepareStatement(sql)
     val rs = st.executeQuery

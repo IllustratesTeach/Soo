@@ -62,7 +62,7 @@ object Utils {
         method.asInstanceOf[HttpPut].setEntity(new StringEntity(jsonParam, Charset.forName("UTF-8")))
       }
       val response = httpClient.execute(method)
-      if(response.getStatusLine.getStatusCode != 200 && !requestType.equals(POST)){
+      if(response.getStatusLine.getStatusCode != 200 && !requestType.equals(PUT)){
         throw new RuntimeException("net request failed:" +response.getEntity.toString)
       }
       EntityUtils.toString(response.getEntity)
