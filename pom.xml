@@ -23,9 +23,6 @@
     <spring-release-version>4.2.4.RELEASE</spring-release-version>
   </properties>
 
-
-
-
   <repositories>
     <repository>
       <id>scala-tools.org</id>
@@ -41,6 +38,12 @@
       <url>http://scala-tools.org/repo-releases</url>
     </pluginRepository>
   </pluginRepositories>
+
+  <scm>
+    <url></url>
+    <connection></connection>
+    <developerConnection></developerConnection>
+  </scm>
 
   <dependencies>
     <dependency>
@@ -169,45 +172,124 @@
 
   </dependencies>
 
+  <organization>
+    <name>The Soo Developer Team</name>
+  </organization>
+  <developers>
+    <developer>
+      <name>yuchen</name>
+      <email>yuchen_1997_200486@126.com</email>
+      <id>yuchen</id>
+    </developer>
+  </developers>
+
   <build>
-    <sourceDirectory>src/main/scala</sourceDirectory>
     <plugins>
       <plugin>
-        <groupId>org.scala-tools</groupId>
-        <artifactId>maven-scala-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <configuration>
+          <createDependencyReducedPom>true</createDependencyReducedPom>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.sf</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.dsa</exclude>
+                <exclude>META-INF/*.RSA</exclude>
+                <exclude>META-INF/*.rsa</exclude>
+                <exclude>META-INF/*.EC</exclude>
+                <exclude>META-INF/*.ec</exclude>
+                <exclude>META-INF/MSFTSIG.SF</exclude>
+                <exclude>META-INF/MSFTSIG.RSA</exclude>
+              </excludes>
+            </filter>
+          </filters>
+        </configuration>
         <executions>
           <execution>
+            <phase>package</phase>
             <goals>
-              <goal>compile</goal>
-              <goal>testCompile</goal>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.gafis.App</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compile-protoc</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <tasks>
+                <mkdir dir="target/generated-sources"/>
+                <path id="proto.path">
+                  <fileset dir="src/main/proto">
+                    <include name="**/*.proto"/>
+                  </fileset>
+                </path>
+                <pathconvert pathsep=" " property="proto.files" refid="proto.path"/>
+                <exec executable="protoc">
+                  <arg value="--java_out=target/generated-sources"/>
+                  <!--<arg value="-I${project.basedir}/src/main/java"/>-->
+                  <arg value="-I${project.basedir}/src/main/proto"/>
+                  <!--<arg value="-I${project.basedir}/src/main/proto-base"/>-->
+                  <arg line="${proto.files}"/>
+                </exec>
+              </tasks>
+              <sourceRoot>target/generated-sources</sourceRoot>
+            </configuration>
+            <goals>
+              <goal>run</goal>
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <scalaVersion>${scala.version}</scalaVersion>
-          <args>
-            <arg>-target:jvm-1.5</arg>
-          </args>
-        </configuration>
       </plugin>
+
+
+      <!--<plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>soo</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>soo-${project.version}</finalName>
+              <descriptors>
+                <descriptor>src/assembly/assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>-->
+
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-eclipse-plugin</artifactId>
+        <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <downloadSources>true</downloadSources>
-          <buildcommands>
-            <buildcommand>ch.epfl.lamp.sdt.core.scalabuilder</buildcommand>
-          </buildcommands>
-          <additionalProjectnatures>
-            <projectnature>ch.epfl.lamp.sdt.core.scalanature</projectnature>
-          </additionalProjectnatures>
-          <classpathContainers>
-            <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
-            <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER</classpathContainer>
-          </classpathContainers>
+          <source>1.7</source>
+          <target>1.7</target>
+          <encoding>UTF8</encoding>
         </configuration>
       </plugin>
     </plugins>
+    <finalName>Soo</finalName>
   </build>
   <reporting>
     <plugins>
