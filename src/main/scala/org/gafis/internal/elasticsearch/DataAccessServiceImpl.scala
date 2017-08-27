@@ -1,6 +1,5 @@
 package org.gafis.internal.elasticsearch
 
-import java.util
 import javax.sql.DataSource
 
 import org.gafis.service.elasticsearch.DataAccessService

@@ -1,10 +1,11 @@
 package org.gafis.utils.elasticsearch
 
-
 import java.nio.charset.Charset
-import org.apache.http.client.methods.{HttpDelete, HttpGet, HttpPost, HttpPut}
+
+import org.apache.http.client.config.RequestConfig
+import org.apache.http.client.methods._
 import org.apache.http.entity.StringEntity
-import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.impl.client.{CloseableHttpClient, HttpClients}
 import org.apache.http.util.EntityUtils
 import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.search.builder.SearchSourceBuilder
@@ -19,52 +20,50 @@ object Utils {
       searchSourceBuilder.query(queryBuilder).toString
     }
 
-    def restClient_putDataToIndex(uri:String,jsonParams:String): String ={
-      val  httpClient =  new DefaultHttpClient()
-      val method = new HttpPost(uri)
-      method.addHeader("Content-type","application/json; charset=utf-8")
-      method.setHeader("Accept", "application/json")
-      method.setEntity(new StringEntity(jsonParams, Charset.forName("UTF-8")))
-      val response = httpClient.execute(method)
-      EntityUtils.toString(response.getEntity())
+
+  object CallFactory{
+
+    final val PUT = "_PUT"
+    final val GET = "_GET"
+    final val DELETE = "_DELETE"
+    final val POST = "_POST"
+
+    val defaultRequestConfig = RequestConfig.custom()
+      .setSocketTimeout(5000)
+      .setConnectTimeout(5000)
+      .setConnectionRequestTimeout(5000)
+      .setStaleConnectionCheckEnabled(true)
+      .build
+
+    val  httpClient :CloseableHttpClient=  HttpClients.custom.setDefaultRequestConfig(defaultRequestConfig)
+      .build
+
+
+    private def getRequestMethod(requestType:String,uri:String): HttpRequestBase ={
+      var httpRequestBase:HttpRequestBase = null
+      requestType match{
+        case PUT => httpRequestBase = new HttpPut(uri)
+        case GET => httpRequestBase = new HttpGet(uri)
+        case DELETE => httpRequestBase = new HttpDelete(uri)
+        case POST => httpRequestBase = new HttpPost(uri)
+      }
+
+      httpRequestBase.addHeader("Content-type","application/json; charset=utf-8")
+      httpRequestBase.setHeader("Accept", "application/json")
+      httpRequestBase
     }
 
-  def restClient_createIndex(uri:String,jsonParams:String): String ={
-    val  httpClient =  new DefaultHttpClient()
-    val method = new HttpPut(uri)
-    method.addHeader("Content-type","application/json; charset=utf-8")
-    method.setHeader("Accept", "application/json")
-    method.setEntity(new StringEntity(jsonParams, Charset.forName("UTF-8")))
-    val response = httpClient.execute(method)
-    EntityUtils.toString(response.getEntity())
-  }
-
-  def restClient_delIndex(uri:String): String ={
-    val  httpClient =  new DefaultHttpClient()
-    val method = new HttpDelete(uri)
-    method.addHeader("Content-type","application/json; charset=utf-8")
-    method.setHeader("Accept", "application/json")
-    val response = httpClient.execute(method)
-    EntityUtils.toString(response.getEntity())
-  }
-
-  def restClient_searchIndex(uri:String): String ={
-    val  httpClient =  new DefaultHttpClient()
-    val method = new HttpGet(uri)
-    method.addHeader("Content-type","application/json; charset=utf-8")
-    method.setHeader("Accept", "application/json")
-    val response = httpClient.execute(method)
-    EntityUtils.toString(response.getEntity())
-  }
-
-  def restClient_query(uri:String,jsonParams:String):String ={
-    val  httpClient =  new DefaultHttpClient()
-    val method = new HttpPost(uri)
-    method.addHeader("Content-type","application/json; charset=utf-8")
-    method.setHeader("Accept", "application/json")
-    val response = httpClient.execute(method)
-    method.setEntity(new StringEntity(jsonParams, Charset.forName("UTF-8")))
-    EntityUtils.toString(response.getEntity())
+    def call(requestType:String,uri:String,jsonParam:String = ""): String ={
+      val method = getRequestMethod(requestType,uri)
+      if(requestType.equals(POST)){
+        method.asInstanceOf[HttpPost].setEntity(new StringEntity(jsonParam, Charset.forName("UTF-8")))
+      }
+      val response = httpClient.execute(method)
+      if(response.getStatusLine.getStatusCode != 200 && !requestType.equals(POST)){
+        throw new RuntimeException("net request failed:" +response.getEntity.toString)
+      }
+      EntityUtils.toString(response.getEntity)
+    }
   }
 
 }

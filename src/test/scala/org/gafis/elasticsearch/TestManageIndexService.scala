@@ -1,5 +1,6 @@
 package org.gafis.elasticsearch
 
+import org.apache.tapestry5.json.JSONObject
 import org.elasticsearch.index.query.QueryBuilders
 import org.gafis.BaseTestCase
 import org.gafis.service.elasticsearch.ManageIndexService
@@ -24,7 +25,7 @@ class TestManageIndexService extends BaseTestCase{
   @Test
   def test_deleteIndex(): Unit ={
     val service = getService[ManageIndexService]
-    service.deleteIndex("testindex","test")
+    service.deleteIndex("testindex")
   }
 
   @Test
@@ -35,17 +36,48 @@ class TestManageIndexService extends BaseTestCase{
 
 
   @Test
-  def test_searchIndex(): Unit ={
-    val service = getService[ManageIndexService]
-    service.searchIndex("testindex")
+  def test_isExistIndex(): Unit ={
+    try{
+      val service = getService[ManageIndexService]
+      val strJson = service.searchIndex("testindex")
+      val jsonObject = new JSONObject(strJson)
+      if(jsonObject.has("hits")){
+        val _jsonObject = new JSONObject(jsonObject.get("hits").toString)
+        if(_jsonObject.has("total")){
+          if(_jsonObject.get("total").toString.toInt > 0){
+            println("索引已经存在")
+          }
+        }
+      }else{
+        println("索引不存在")
+      }
+    }catch{
+      case e:Throwable =>
+        println(e.getMessage)
+    }
+  }
+
+
+
+
+  @Test
+  def test_SearchIndex(): Unit ={
+    try{
+      val service = getService[ManageIndexService]
+      val strJson = service.searchIndex("testindex")
+      println(strJson)
+    }catch{
+      case e:Throwable =>
+        println(e.getMessage)
+    }
   }
 
   @Test
   def test_queryIndex(): Unit ={
     val service = getService[ManageIndexService]
-    val query = QueryBuilders.boolQuery()
+    /*val query = QueryBuilders.boolQuery()
       .must(QueryBuilders.matchQuery("ID", 1))
       .must(QueryBuilders.matchQuery("NAME", "wangwu7"))
-    service.query("testindex",Utils.buildESQueryParamByAPI(query))
+    service.query("testindex",Utils.buildESQueryParamByAPI(query))*/
   }
 }

@@ -1,9 +1,10 @@
 package org.gafis.internal.elasticsearch
 
-import org.elasticsearch.index.query.QueryBuilders
+import org.apache.tapestry5.json.JSONObject
 import org.gafis.service.elasticsearch.{DataAccessService, ManageIndexService}
 import org.gafis.utils.JsonUtil
 import org.gafis.utils.elasticsearch.Utils
+import org.gafis.utils.elasticsearch.Utils.CallFactory
 
 /**
   * Created by yuchen on 2017/8/25.
@@ -16,28 +17,44 @@ class ManageIndexServiceImpl(dataAccessService: DataAccessService) extends Manag
     val httpAddress = URL + "/" + indexName + "/" + tableName +"?pretty"
     dataAccessService.getDataFromDataBase.foreach{
       t =>
-        val str = Utils.restClient_putDataToIndex(httpAddress,JsonUtil.mapToJSONStr(t))
+        val str = CallFactory.call(CallFactory.POST,httpAddress,JsonUtil.mapToJSONStr(t))
         println(str)
     }
   }
 
-  override def deleteIndex(indexName: String, tableName: String): Unit = {
+  override def deleteIndex(indexName: String): Unit = {
     val httpAddress = URL + "/" + indexName + "?pretty"
-    println(Utils.restClient_delIndex(httpAddress))
+    val resultStr = CallFactory.call(CallFactory.DELETE,httpAddress)
+    val jsonObject = new JSONObject(resultStr)
+    if(jsonObject.has("acknowledged")){
+      if(jsonObject.getBoolean("acknowledged")){
+        println("index delete success")
+      }else{
+        println("index delete failed")
+      }
+    }
   }
 
   override def createIndex(indexName: String): Unit = {
     val httpAddress = URL + "/" + indexName +"?pretty"
-    println(Utils.restClient_createIndex(httpAddress,""))
+    val resultStr = CallFactory.call(CallFactory.PUT,httpAddress)
+    val jsonObject = new JSONObject(resultStr)
+    if(jsonObject.has("acknowledged") && jsonObject.has("shards_acknowledged")){
+      if(jsonObject.getBoolean("acknowledged") && jsonObject.getBoolean("shards_acknowledged")){
+        println("index create success")
+      }else{
+        println("index create failed")
+      }
+    }
   }
 
-  override def searchIndex(indexName: String): Unit = {
+  override def searchIndex(indexName: String): String = {
     val httpAddress = URL + "/" + indexName +"/_search?pretty"
-    println(Utils.restClient_searchIndex(httpAddress))
+    CallFactory.call(CallFactory.GET,httpAddress)
   }
 
   override def query(indexName: String, jsonStr: String): Unit = {
     val httpAddress = URL + "/" + indexName +"/_search?pretty"
-    println(Utils.restClient_searchIndex(httpAddress),jsonStr)
+    //println(Utils.restClient_searchIndex(httpAddress),jsonStr)
   }
 }

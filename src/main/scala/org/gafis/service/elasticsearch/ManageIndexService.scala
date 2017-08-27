@@ -12,9 +12,9 @@ trait ManageIndexService {
 
     def putDataToIndex(indexName:String,tableName:String,jsonStr:String): Unit
 
-    def deleteIndex(indexName:String,tableName:String): Unit
+    def deleteIndex(indexName:String): Unit
 
-    def searchIndex(indexName:String):Unit
+    def searchIndex(indexName:String):String
 
     def query(indexName:String,jsonStr:String):Unit
 }

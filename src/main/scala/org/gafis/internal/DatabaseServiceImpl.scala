@@ -48,7 +48,7 @@ class DatabaseServiceImpl(implicit val dataSource: DataSource) extends DatabaseS
   override def update(conn:Connection): Int = {
     var flag = -1
 
-    val sql2 = "update TEST_PERSON set name='lisi1' where id=5"
+    val sql2 = "update TEST_PERSON set name='wangwu8' where id=7"
     var ps:PreparedStatement = null
     try{
       ps = conn.prepareStatement(sql2)
@@ -87,7 +87,7 @@ class DatabaseServiceImpl(implicit val dataSource: DataSource) extends DatabaseS
   override def bussize(): Unit = {
     val conn = dataSource.getConnection
     try{
-      save(conn)
+      //save(conn)
       update(conn)
       conn.commit
     }catch{
