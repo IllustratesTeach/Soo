@@ -48,7 +48,7 @@ class DatabaseServiceImpl(implicit val dataSource: DataSource) extends DatabaseS
   override def update(conn:Connection): Int = {
     var flag = -1
 
-    val sql2 = "update TEST_PERSON set name='wangwu8' where id=7"
+    val sql2 = "update TEST_PERSON set name='保利尼奥' where id=3"
     var ps:PreparedStatement = null
     try{
       ps = conn.prepareStatement(sql2)

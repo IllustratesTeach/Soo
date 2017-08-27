@@ -17,4 +17,6 @@ trait ManageIndexService {
     def searchIndex(indexName:String):String
 
     def query(indexName:String,jsonStr:String):Unit
+
+    def updateDataToIndex(indexName: String, tableName: String):Unit
 }

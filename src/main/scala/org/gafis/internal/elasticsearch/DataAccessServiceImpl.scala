@@ -31,4 +31,24 @@ class DataAccessServiceImpl(implicit val dataSource: DataSource) extends DataAcc
 
     resultList
   }
+
+  override def getOneRecord(): mutable.HashMap[String, Any] = {
+
+    val sql = "SELECT * FROM TEST_PERSON WHERE ID = 3"
+    val conn = dataSource.getConnection
+    val st = conn.prepareStatement(sql)
+    val rs = st.executeQuery
+    var map = new scala.collection.mutable.HashMap[String,Any]
+    try{
+      while(rs.next()){
+        map += ("ID" -> rs.getString("ID"))
+        map += ("NAME" -> rs.getString("NAME"))
+        map += ("MEMO" -> rs.getString("MEMO"))
+      }
+    }finally {
+      st.close
+      conn.close
+    }
+    map
+  }
 }

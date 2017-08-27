@@ -58,6 +58,8 @@ object Utils {
       val method = getRequestMethod(requestType,uri)
       if(requestType.equals(POST)){
         method.asInstanceOf[HttpPost].setEntity(new StringEntity(jsonParam, Charset.forName("UTF-8")))
+      }else if(requestType.equals(PUT) && !jsonParam.equals("")){
+        method.asInstanceOf[HttpPut].setEntity(new StringEntity(jsonParam, Charset.forName("UTF-8")))
       }
       val response = httpClient.execute(method)
       if(response.getStatusLine.getStatusCode != 200 && !requestType.equals(POST)){

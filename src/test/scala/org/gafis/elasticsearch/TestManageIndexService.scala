@@ -80,4 +80,10 @@ class TestManageIndexService extends BaseTestCase{
       .must(QueryBuilders.matchQuery("NAME", "wangwu7"))
     service.query("testindex",Utils.buildESQueryParamByAPI(query))*/
   }
+
+  @Test
+  def test_updateDataToIndex():Unit ={
+    val service = getService[ManageIndexService]
+    service.updateDataToIndex("testindex","test")
+  }
 }

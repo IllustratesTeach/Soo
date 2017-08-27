@@ -21,7 +21,7 @@ class TestDatabaseServiceImpl extends BaseTestCase{
   def test_query(): Unit ={
     val service = getService[DatabaseService]
     service.query.foreach{
-      t => println(t.get("NAME"))
+      t => println(t.get("NAME") + "ID:" + t.get("ID"))
     }
   }
 

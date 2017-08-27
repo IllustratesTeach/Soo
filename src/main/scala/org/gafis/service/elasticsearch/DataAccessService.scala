@@ -7,4 +7,6 @@ import scala.collection.mutable
   */
 trait DataAccessService {
     def getDataFromDataBase():mutable.ListBuffer[mutable.HashMap[String,Any]]
+
+    def getOneRecord():mutable.HashMap[String,Any]
 }
