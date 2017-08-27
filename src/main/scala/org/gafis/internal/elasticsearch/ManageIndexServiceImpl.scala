@@ -56,4 +56,9 @@ class ManageIndexServiceImpl(dataAccessService: DataAccessService) extends Manag
     val httpAddress = URL + "/" + indexName +"/_search?pretty"
     //println(Utils.restClient_searchIndex(httpAddress),jsonStr)
   }
+
+  override def updateDataToIndex(indexName: String, tableName: String): Unit = {
+    val httpAddress = URL + "/" + indexName + "/" + tableName +"/AV4j7QEcvYUFXBFiUNBh"
+    CallFactory.call(CallFactory.PUT,httpAddress,JsonUtil.mapToJSONStr(dataAccessService.getOneRecord))
+  }
 }
