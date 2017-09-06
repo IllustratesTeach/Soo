@@ -10,11 +10,31 @@ import javax.xml.bind.annotation._
 @XmlRootElement
 class WebConfig {
 
-  @XmlElement(name = "bind")
-  var bind: String = "127.0.0.1:8090"
+  @XmlElement(name = "web")
+  var web: Web = new Web
+
+  @XmlElement(name = "sync")
+  var sync:Sync = new Sync
+
+  @XmlElement(name = "elasticsearch-url")
+  var elasticsearchurl:String ="http://localhost:9200"
 
   @XmlElement(name = "database")
   var database:DataBase = new DataBase
+
+  @XmlElement(name = "sql")
+  var sql:String = _
+
+}
+
+class Sync{
+  @XmlElement(name = "sync_cron")
+  var sync_cron: String = "0/1 * * * * ? "
+}
+
+class Web{
+  @XmlElement(name = "bind")
+  var bind: String = "127.0.0.1:8090"
 }
 
 class DataBase{

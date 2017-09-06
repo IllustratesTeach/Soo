@@ -25,7 +25,7 @@ trait ServerSupport {
   protected def startServer(config: WebConfig, pkg: String, classes: Class[_]*): Server = {
     this.modules = Some(classes.toArray)
     try {
-      val bind = addressParser.parseBind(config.bind)
+      val bind = addressParser.parseBind(config.web.bind)
       val server = JettyServerCreator.createTapestryWebapp(bind._1, bind._2, pkg, "rest", new RestTapestryFilter)
       JettyServerCreator.configServer(server, new ServerConfig)
       server.start()

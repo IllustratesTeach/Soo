@@ -1,66 +1,85 @@
 package org.gafis.internal.elasticsearch
 
+
 import org.apache.tapestry5.json.JSONObject
 import org.gafis.service.elasticsearch.{DataAccessService, ManageIndexService}
-import org.gafis.utils.JsonUtil
+import org.gafis.utils.{Constant, JsonUtil}
 import org.gafis.utils.elasticsearch.Utils.CallFactory
+import org.slf4j.LoggerFactory
 
 /**
   * Created by yuchen on 2017/8/25.
   */
 class ManageIndexServiceImpl(dataAccessService: DataAccessService) extends ManageIndexService{
 
-  private final val URL = "http://localhost:9200"
+  val logger = LoggerFactory getLogger getClass
 
-  override def putDataToIndex(indexName: String, tableName: String, jsonStr: String): Unit = {
-
-    var httpAddress = ""
-    dataAccessService.getDataFromDataBase.foreach{
-      t =>
-        httpAddress = URL + "/" + indexName + "/" + tableName + "/" + t.get("ID").get.toString +"?pretty"
-        val str = CallFactory.call(CallFactory.PUT,httpAddress,JsonUtil.mapToJSONStr(t))
-        println(str)
-    }
+  override def putDataToIndex(indexName: String,id:String,jsonStr: String): Unit = {
+    val str = CallFactory.call(CallFactory.PUT,getRequestURL(Constant.PUT_DATA_TO_INDEX,indexName,indexName,id),jsonStr)
+    logger.info("ID:" + id +" Data input success, information:" + str)
   }
 
   override def deleteIndex(indexName: String): Unit = {
-    val httpAddress = URL + "/" + indexName + "?pretty"
-    val resultStr = CallFactory.call(CallFactory.DELETE,httpAddress)
+
+    val resultStr = CallFactory.call(CallFactory.DELETE,getRequestURL(Constant.DELETE_INDEX,indexName))
     val jsonObject = new JSONObject(resultStr)
-    if(jsonObject.has("acknowledged")){
-      if(jsonObject.getBoolean("acknowledged")){
-        println("index delete success")
-      }else{
-        println("index delete failed")
-      }
+    if(jsonObject.has("acknowledged") && jsonObject.getBoolean("acknowledged")){
+      logger.info("index delete success")
+    } else{
+        logger.warn("index delete failed,info:{}",resultStr)
+        throw new Exception("index delete failed,info:" + resultStr)
     }
   }
 
   override def createIndex(indexName: String): Unit = {
-    val httpAddress = URL + "/" + indexName +"?pretty"
-    val resultStr = CallFactory.call(CallFactory.PUT,httpAddress)
+
+    val resultStr = CallFactory.call(CallFactory.PUT,getRequestURL(Constant.CREATE_INDEX,indexName))
     val jsonObject = new JSONObject(resultStr)
-    if(jsonObject.has("acknowledged") && jsonObject.has("shards_acknowledged")){
-      if(jsonObject.getBoolean("acknowledged") && jsonObject.getBoolean("shards_acknowledged")){
-        println("index create success")
-      }else{
-        println("index create failed")
-      }
+    if(jsonObject.has("acknowledged") && jsonObject.getBoolean("acknowledged")){
+          logger.info("index create success")
+    }else{
+      logger.warn("index create failed,info:{}",resultStr)
+      throw new Exception("index create failed,info:" + resultStr)
     }
   }
 
   override def searchIndex(indexName: String): String = {
-    val httpAddress = URL + "/" + indexName +"/_search?pretty"
-    CallFactory.call(CallFactory.GET,httpAddress)
+    val resultStr = CallFactory.call(CallFactory.GET,getRequestURL(Constant.SEARCH_INDEX,indexName))
+    val jsonObject = new JSONObject(resultStr)
+    if(jsonObject.has("hits")){
+      val _jsonObject = new JSONObject(jsonObject.get("hits").toString)
+      if(_jsonObject.has("total")){
+        logger.info("索引已存在")
+      }
+    }else{
+      throw new Exception("search index failed:" + resultStr)
+    }
+    resultStr
   }
 
   override def query(indexName: String, jsonStr: String): Unit = {
-    val httpAddress = URL + "/" + indexName +"/_search?pretty"
     //println(Utils.restClient_searchIndex(httpAddress),jsonStr)
   }
 
-  override def updateDataToIndex(indexName: String, tableName: String): Unit = {
-    val httpAddress = URL + "/" + indexName + "/" + tableName +"/4"
-    CallFactory.call(CallFactory.PUT,httpAddress,JsonUtil.mapToJSONStr(dataAccessService.getOneRecord))
+  override def updateDataToIndex(indexName: String,id:String,jsonStr: String): Unit = {
+    CallFactory.call(CallFactory.PUT
+      ,getRequestURL(Constant.UPDATE_DATA_TO_INDEX,indexName,indexName,id)
+      ,jsonStr)
+  }
+
+  private def getRequestURL(accessType:String,indexName:String,tableName:String = Constant.EMPTY,id:String = Constant.EMPTY): String ={
+
+    var httpAddress = ""
+    accessType match{
+      case Constant.PUT_DATA_TO_INDEX | Constant.UPDATE_DATA_TO_INDEX=>
+        httpAddress = Constant.webConfig.get.elasticsearchurl + Constant.URL_SEPARATOR + indexName + Constant.URL_SEPARATOR + tableName + Constant.URL_SEPARATOR + id + Constant.JSON_PATTER_RESPONSE
+      case Constant.CREATE_INDEX | Constant.DELETE_INDEX=>
+        httpAddress = Constant.webConfig.get.elasticsearchurl + Constant.URL_SEPARATOR + indexName + Constant.JSON_PATTER_RESPONSE
+      case Constant.SEARCH_INDEX =>
+        httpAddress = Constant.webConfig.get.elasticsearchurl + Constant.URL_SEPARATOR + indexName + Constant.URL_SEPARATOR + Constant.JSON_PATTER_SEARCH_INDEX_RESPONSE
+      case Constant.QUERY =>
+
+    }
+    httpAddress
   }
 }

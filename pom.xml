@@ -170,6 +170,20 @@
       <version>5.5.2</version>
     </dependency>
 
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+    </dependency>
+
+
+    <!-- jansi -->
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi</artifactId>
+      <version>1.8</version>
+    </dependency>
+
   </dependencies>
 
   <organization>
@@ -226,7 +240,7 @@
         </executions>
       </plugin>
 
-      <plugin>
+      <!--<plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
@@ -242,10 +256,10 @@
                 </path>
                 <pathconvert pathsep=" " property="proto.files" refid="proto.path"/>
                 <exec executable="protoc">
-                  <arg value="--java_out=target/generated-sources"/>
-                  <!--<arg value="-I${project.basedir}/src/main/java"/>-->
+                  <arg value="&#45;&#45;java_out=target/generated-sources"/>
+                  &lt;!&ndash;<arg value="-I${project.basedir}/src/main/java"/>&ndash;&gt;
                   <arg value="-I${project.basedir}/src/main/proto"/>
-                  <!--<arg value="-I${project.basedir}/src/main/proto-base"/>-->
+                  &lt;!&ndash;<arg value="-I${project.basedir}/src/main/proto-base"/>&ndash;&gt;
                   <arg line="${proto.files}"/>
                 </exec>
               </tasks>
@@ -256,7 +270,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin>-->
 
 
       <!--<plugin>

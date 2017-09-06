@@ -1,0 +1,17 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+        <title>入库</title>
+    </head>
+    <body>
+        <div>
+            <label id="txtsql">SQL:</label>
+            <textarea id="sql" name="sql" style="width:1000px;height:300px;"/>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <button t:type="any" t:id="inputdata" onclick="javascript:inputdata('sql','result');">入库</button>
+            <div id="result" />
+        </div>
+    </body>
+</html>

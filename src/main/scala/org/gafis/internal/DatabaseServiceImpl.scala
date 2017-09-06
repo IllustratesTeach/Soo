@@ -29,23 +29,25 @@ class DatabaseServiceImpl(implicit val dataSource: DataSource) extends DatabaseS
   }
 
 
-  override def save(conn:Connection): Int = {
+  override def save(): Int = {
+    val conn = dataSource.getConnection
     var flag = -1
-    val sql1 = "insert into TEST_PERSON (ID,NAME,MEMO) values (7,'wangwu7','memo')"
-    var ps:PreparedStatement = null
+    val sql1 = "insert into TEST_PERSON (ID,NAME,MEMO) values (2,'郑智','广州恒大')"
+    val ps:PreparedStatement = conn.prepareStatement(sql1)
     try{
-      ps = conn.prepareStatement(sql1)
       flag = ps.executeUpdate
       if(flag <=0){
         throw new Exception("insert fail")
       }
     }finally {
       ps.close
+      conn.close
     }
      flag
   }
 
-  override def update(conn:Connection): Int = {
+  override def update(): Int = {
+    val conn = dataSource.getConnection
     var flag = -1
 
     val sql2 = "update TEST_PERSON set NAME='郑智' where id=2"
@@ -88,7 +90,7 @@ class DatabaseServiceImpl(implicit val dataSource: DataSource) extends DatabaseS
     val conn = dataSource.getConnection
     try{
       //save(conn)
-      update(conn)
+      update()
       conn.commit
     }catch{
       case e:Exception =>
@@ -97,5 +99,86 @@ class DatabaseServiceImpl(implicit val dataSource: DataSource) extends DatabaseS
     }finally {
       conn.close
     }
+  }
+
+
+  override def queryMaxSeq(sql: String): Long = {
+    val conn = dataSource.getConnection
+    val st = conn.prepareStatement(sql)
+    val rs = st.executeQuery
+    var maxSeq = 0L
+    try{
+      while(rs.next()){
+        maxSeq = rs.getLong("NUM")
+      }
+    }finally {
+      st.close
+      conn.close
+    }
+    maxSeq
+  }
+
+  /**
+    * 获得当前已经抓取的SEQ值
+    *
+    * @param sql
+    * @return
+    */
+  override def queryCurrentSeq(sql: String): Long = {
+    val conn = dataSource.getConnection
+    val st = conn.prepareStatement(sql)
+    val rs = st.executeQuery
+    var currentSeq = 0L
+    try{
+      while(rs.next()){
+        currentSeq = rs.getLong("NUM")
+      }
+    }finally {
+      st.close
+      conn.close
+    }
+    currentSeq
+  }
+
+  override def querySourcesList(): ListBuffer[mutable.HashMap[String, Any]] = {
+    val sql = "select UUID,NAME,SQL,SEQ from soo_resource where flag = 1"
+    val resultList = new mutable.ListBuffer[mutable.HashMap[String,Any]]
+    val conn = dataSource.getConnection
+    val st = conn.prepareStatement(sql)
+    val rs = st.executeQuery
+    try{
+      while(rs.next()){
+        var map = new scala.collection.mutable.HashMap[String,Any]
+        map += ("UUID" -> rs.getString("UUID"))
+        map += ("NAME" -> rs.getString("NAME"))
+        map += ("SQL" -> rs.getString("SQL"))
+        map += ("SEQ" -> rs.getString("SEQ"))
+        resultList.append(map)
+      }
+    }finally {
+      st.close
+      conn.close
+    }
+
+    resultList
+  }
+
+  override def updateCurrentSeq(seq: Long,uuid:String): Unit = {
+      val conn = dataSource.getConnection
+      var flag = -1
+
+      val sql = "update soo_resource set SEQ=? where UUID=?"
+      var ps:PreparedStatement = null
+      try{
+        ps = conn.prepareStatement(sql)
+        ps.setLong(1,seq)
+        ps.setString(2,uuid)
+        flag = ps.executeUpdate
+        if(flag <=0){
+          throw new Exception("更新失败")
+        }
+      }finally {
+        ps.close
+      }
   }
 }

@@ -4,7 +4,6 @@ import org.apache.tapestry5.json.JSONObject
 import org.elasticsearch.index.query.QueryBuilders
 import org.gafis.BaseTestCase
 import org.gafis.service.elasticsearch.ManageIndexService
-import org.gafis.utils.elasticsearch.Utils
 import org.junit.Test
 
 /**
@@ -25,7 +24,7 @@ class TestManageIndexService extends BaseTestCase{
   @Test
   def test_deleteIndex(): Unit ={
     val service = getService[ManageIndexService]
-    service.deleteIndex("testindex")
+    service.deleteIndex("gafisperson")
   }
 
   @Test
@@ -39,18 +38,7 @@ class TestManageIndexService extends BaseTestCase{
   def test_isExistIndex(): Unit ={
     try{
       val service = getService[ManageIndexService]
-      val strJson = service.searchIndex("testindex")
-      val jsonObject = new JSONObject(strJson)
-      if(jsonObject.has("hits")){
-        val _jsonObject = new JSONObject(jsonObject.get("hits").toString)
-        if(_jsonObject.has("total")){
-          if(_jsonObject.get("total").toString.toInt > 0){
-            println("索引已经存在")
-          }
-        }
-      }else{
-        println("索引不存在")
-      }
+      service.searchIndex("testindex")
     }catch{
       case e:Throwable =>
         println(e.getMessage)
@@ -84,6 +72,9 @@ class TestManageIndexService extends BaseTestCase{
   @Test
   def test_updateDataToIndex():Unit ={
     val service = getService[ManageIndexService]
-    service.updateDataToIndex("testindex","test")
+    service.updateDataToIndex("testindex","test","4")
   }
+
+
+
 }

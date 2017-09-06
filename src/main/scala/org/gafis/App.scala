@@ -1,6 +1,7 @@
 package org.gafis
 
 
+import gafis.utils.CommonUtils
 import org.gafis.jettyserver.ServerSupport
 import org.gafis.utils.Constant
 import org.slf4j.LoggerFactory
@@ -16,15 +17,17 @@ object App extends ServerSupport{
     logger.info("Server Starting......")
 
     val classes = List[Class[_]](
-      Class.forName("org.gafis.ServiceModule"),
-      Class.forName("org.gafis.DataSourceModule"),
-      Class.forName("stark.webservice.StarkWebServiceModule")
+      Class.forName("org.gafis.ElasticSearchServiceModule"),
+      Class.forName("org.gafis.DataSourceModule")
+      //Class.forName("stark.webservice.StarkWebServiceModule")
     )
     val webConfig = Constant.webConfig
     webConfig match{
       case Some(m) =>
-        startServer(m,"org.gafis",classes:_*)
-        logger.info("Rest Soo server started " + Constant.LOGO)
+        startServer(m,"gafis",classes:_*)
+
+        logger.info("Rest Soo server started ")
+        CommonUtils.printTextWithNative(logger,Constant.LOGO)
         join
       case _ =>
         logger.error("GET Config None")

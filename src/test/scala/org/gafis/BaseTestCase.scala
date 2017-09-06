@@ -1,6 +1,6 @@
 package org.gafis
 
-import javax.persistence.EntityManagerFactory
+
 
 import org.apache.tapestry5.ioc.{Registry, RegistryBuilder, ServiceBinder}
 import org.gafis.internal.DatabaseServiceImpl
