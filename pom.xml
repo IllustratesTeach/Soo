@@ -199,7 +199,7 @@
 
   <build>
     <plugins>
-      <plugin>
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <configuration>
@@ -238,7 +238,7 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
+      </plugin>-->
 
       <!--<plugin>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -273,7 +273,7 @@
       </plugin>-->
 
 
-      <!--<plugin>
+      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
@@ -285,12 +285,12 @@
             <configuration>
               <finalName>soo-${project.version}</finalName>
               <descriptors>
-                <descriptor>src/assembly/assembly.xml</descriptor>
+                <descriptor>assembly/assembly.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
         </executions>
-      </plugin>-->
+      </plugin>
 
 
       <plugin>
