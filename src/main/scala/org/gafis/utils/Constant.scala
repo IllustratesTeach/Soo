@@ -26,7 +26,8 @@ object Constant {
   final val EMPTY = ""
 
   def getWebConfig(): Unit ={
-    val file = new File(getClass.getClassLoader.getResource("webconfig.xml").getPath)
+    val serverHome = System.getProperty("server.home","config")
+    val file = new File(serverHome + "/webconfig.xml")
     val obj = XMLParser.xmlToBean(file,classOf[WebConfig])
     webConfig = Some(obj.asInstanceOf[WebConfig])
   }
