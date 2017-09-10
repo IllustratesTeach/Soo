@@ -1,6 +1,7 @@
 package gafis.utils
 
 import java.sql.ResultSet
+import java.util.regex.Pattern
 
 import org.apache.commons.lang.StringUtils
 import org.fusesource.jansi.{Ansi, AnsiConsole}
@@ -56,4 +57,25 @@ object CommonUtils {
       AnsiConsole.systemUninstall()
     }
   }
+
+  def filterSQL(sql:String): String ={
+    val str = "\\*|update|or|delete|insert|trancate|char|into|substr|ascii|declare|exec|count|master|into|drop|execute"
+    if(Pattern.compile(str).matcher(sql).find){
+      throw new Exception("SQL is Ill")
+    }
+    sql
+  }
+
+  def replaceCharsetInSQL(sql:String):String ={
+    sql.toLowerCase.replaceAll("<", "")
+      .replaceAll(">", "")
+      .replaceAll("'", "")
+      .replaceAll("%", "")
+      .replaceAll("--","")
+      .replaceAll("/","")
+  }
+
+  /*def main(args: Array[String]): Unit = {
+    println(filterSQL(replaceCharsetInSQL("select name FROm a where 1 = 1' and a.id = 100")))
+  }*/
 }
