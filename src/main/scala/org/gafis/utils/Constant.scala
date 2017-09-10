@@ -53,5 +53,9 @@ object Constant {
   final val URL_SEPARATOR = "/"
 
 
+  //多线程 执行完成
+  final val FUTURE_COMPLETED = 1
+
+
 
 }

@@ -2,6 +2,8 @@ package org.gafis
 
 
 
+import gafis.internal.elasticsearch.InputDataServiceImpl
+import gafis.service.elasticsearch.InputDataService
 import org.apache.tapestry5.ioc.{Registry, RegistryBuilder, ServiceBinder}
 import org.gafis.internal.DatabaseServiceImpl
 import org.gafis.internal.elasticsearch.{DataAccessServiceImpl, ManageIndexServiceImpl}
@@ -42,6 +44,7 @@ object TestModule{
     binder.bind(classOf[DatabaseService],classOf[DatabaseServiceImpl])
     binder.bind(classOf[DataAccessService],classOf[DataAccessServiceImpl])
     binder.bind(classOf[ManageIndexService],classOf[ManageIndexServiceImpl])
+    binder.bind(classOf[InputDataService],classOf[InputDataServiceImpl])
   }
 
 }
