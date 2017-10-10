@@ -7,5 +7,5 @@ trait InputDataService {
 
   def inputDataToIndex(indexName:String,sql:String,uuid:String):Unit
 
-  def initSooResource(indexName:String)
+  def initSooResource(indexName:String,sql:String):String
 }

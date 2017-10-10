@@ -1,11 +1,11 @@
 package org.gafis
 
+import gafis.internal.elasticsearch.InputDataServiceImpl
 import gafis.internal.elasticsearch.sync.SyncCronServiceImpl
+import gafis.service.elasticsearch.InputDataService
 import gafis.service.elasticsearch.sync.SyncCronService
 import org.apache.tapestry5.ioc.ServiceBinder
-import org.gafis.internal.DatabaseServiceImpl
 import org.gafis.internal.elasticsearch.{DataAccessServiceImpl, ManageIndexServiceImpl}
-import org.gafis.service.DatabaseService
 import org.gafis.service.elasticsearch.{DataAccessService, ManageIndexService}
 
 /**
@@ -13,9 +13,9 @@ import org.gafis.service.elasticsearch.{DataAccessService, ManageIndexService}
   */
 object ElasticSearchServiceModule {
   def bind(binder:ServiceBinder): Unit ={
-    binder.bind(classOf[DatabaseService],classOf[DatabaseServiceImpl])
     binder.bind(classOf[DataAccessService],classOf[DataAccessServiceImpl])
     binder.bind(classOf[ManageIndexService],classOf[ManageIndexServiceImpl])
-    binder.bind(classOf[SyncCronService],classOf[SyncCronServiceImpl]).eagerLoad
+    binder.bind(classOf[InputDataService],classOf[InputDataServiceImpl])
+    binder.bind(classOf[SyncCronService],classOf[SyncCronServiceImpl])//.eagerLoad
   }
 }

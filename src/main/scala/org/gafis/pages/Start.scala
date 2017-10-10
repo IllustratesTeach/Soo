@@ -5,7 +5,6 @@ import javax.inject.Inject
 import org.apache.tapestry5.json.{JSONArray, JSONObject}
 import org.apache.tapestry5.services.{Request, Response}
 import org.apache.tapestry5.util.TextStreamResponse
-import org.gafis.service.DatabaseService
 
 /**
   * Created by yuchen on 2017/8/20.
@@ -13,9 +12,6 @@ import org.gafis.service.DatabaseService
 class Start {
   @Inject
   private var request:Request= _
-
-  @Inject
-  private var databaseService:DatabaseService = _
 
   @Inject
   private var response:Response= _
@@ -29,7 +25,7 @@ class Start {
       jSONArray.put(jSONObject)
     }else{
 
-      val result = databaseService.query
+      /*val result = databaseService.query
       result.foreach{
         t =>
           val jSONObject = new JSONObject()
@@ -38,7 +34,7 @@ class Start {
               jSONObject.append(m._1,m._2)
           }
           jSONArray.put(jSONObject)
-      }
+      }*/
     }
 
 

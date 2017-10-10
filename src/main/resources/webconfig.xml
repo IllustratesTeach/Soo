@@ -20,7 +20,7 @@
         <sync_cron>0/1 * * * * ? </sync_cron>
     </sync>
     <sql>
-        SELECT LOWER(p.personid) as personid,
+        SELECT LOWER(p.personid) as id,
                 p.fingerrepeatno as fingerrepeatno,
                 p.psis_no as psisNo,
                 p.than_state_tt as thanStateTT,

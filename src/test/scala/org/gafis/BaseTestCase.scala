@@ -5,9 +5,7 @@ package org.gafis
 import gafis.internal.elasticsearch.InputDataServiceImpl
 import gafis.service.elasticsearch.InputDataService
 import org.apache.tapestry5.ioc.{Registry, RegistryBuilder, ServiceBinder}
-import org.gafis.internal.DatabaseServiceImpl
 import org.gafis.internal.elasticsearch.{DataAccessServiceImpl, ManageIndexServiceImpl}
-import org.gafis.service.DatabaseService
 import org.gafis.service.elasticsearch.{DataAccessService, ManageIndexService}
 import org.gafis.utils.Constant
 import org.junit.Before
@@ -28,7 +26,6 @@ class BaseTestCase {
     val modules = Seq[String](
       //"stark.activerecord.StarkActiveRecordModule",
       "org.gafis.DataSourceModule",
-      //"org.gafis.ServiceModule"
       "org.gafis.TestModule"
       //"stark.webservice.StarkWebServiceModule"
     ).map(Class.forName)
@@ -41,7 +38,6 @@ class BaseTestCase {
 object TestModule{
 
   def bind(binder: ServiceBinder): Unit = {
-    binder.bind(classOf[DatabaseService],classOf[DatabaseServiceImpl])
     binder.bind(classOf[DataAccessService],classOf[DataAccessServiceImpl])
     binder.bind(classOf[ManageIndexService],classOf[ManageIndexServiceImpl])
     binder.bind(classOf[InputDataService],classOf[InputDataServiceImpl])

@@ -1,16 +1,74 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <webConfig>
-    <bind>127.0.0.1:8090</bind>
-    <database>
+    <web>
+        <bind>127.0.0.1:8090</bind>
+    </web>
+    <elasticsearch-url>http://192.168.1.193:9200</elasticsearch-url>
+    <!--<database>
         <driver>org.h2.Driver</driver>
         <user>sa</user>
         <password>sa</password>
-        <url>jdbc:h2:~/soo</url>
-    </database>
-    <!--<database>
-        <driver>oracle.jdbc.driver.OracleDriver</driver>
-        <user>afis</user>
-        <password>helloafis</password>
-        <url>jdbc:oracle:thin:@192.168.1.17:1521:oragafis6</url>
+        <url>jdbc:h2:E:\h2DB\Soo</url>
     </database>-->
+    <database>
+        <driver>oracle.jdbc.driver.OracleDriver</driver>
+        <user>gafis_nj</user>
+        <password>gafis</password>
+        <url>jdbc:oracle:thin:@192.168.1.213:1521:oragafis</url>
+    </database>
+    <sync>
+        <sync_cron>0/1 * * * * ? </sync_cron>
+    </sync>
+    <sql>
+        SELECT LOWER(p.personid) as id,
+        p.fingerrepeatno as fingerrepeatno,
+        p.psis_no as psisNo,
+        p.than_state_tt as thanStateTT,
+        p.than_state_tl as thanStateTL,
+        p.than_state_lt as thanStateLT,
+        p.aliasname as aliasname,
+        p.gatheruserid as gatheruserid,
+        p.nation_code as nationCode,
+        p.modifiedpsn as modifiedpsn,
+        p.sex_code as sex_code,
+        p.name as NAME,
+        p.idcardno as idcardno,
+        p.birthdayst as birthdayst,
+        p.birthdayed as birthdayed,
+        p.gather_category as gather_category,
+        p.gather_type_id as gather_type_id,
+        p.gatherdepartcode as gatherdepartcode,
+        p.gatherdepartname as gatherdepartname,
+        p.gather_date as gather_date,
+        p.person_type as person_type,
+        p.tone_code as tone_code,
+        p.birth_code as birth_code,
+        p.door as door,
+        p.address as address,
+        p.case_classes as case_classes,
+        p.data_sources as data_sources,
+        ly.name as data_sources_name,
+        p.assist_level as assist_level,
+        p.status as status,
+        p.approval  as approval ,
+        p.fingershow_status as fingershow_status,
+        LOWER(p.gather_org_code) as gather_org_code,
+        d.name as gather_org_name,
+        p.inputtime as inputtime,
+        p.inputpsn as inputpsn,
+        p.modifiedtime as modifiedtime,
+        p.deletag as deletag,
+        p.seq as seq,
+        f_get_phones_by_personid(p.personid) as phone_number,
+        f_get_logicids_by_personid(p.personid) logicids,
+        (SELECT
+        case count(*) WHEN 0 THEN 0 ELSE 1 END
+        FROM gafis_gather_palm palm
+        WHERE palm.PERSON_ID = p.PERSONID) as has_palm
+        FROM gafis_person p
+        LEFT join sys_depart d
+        ON p.gather_org_code = d.code
+        LEFT JOIN code_ly ly
+        ON p.data_sources = ly.code
+    </sql>
 </webConfig>

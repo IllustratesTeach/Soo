@@ -3,7 +3,7 @@ package org.gafis.internal.elasticsearch
 
 import org.apache.tapestry5.json.JSONObject
 import org.gafis.service.elasticsearch.{DataAccessService, ManageIndexService}
-import org.gafis.utils.{Constant, JsonUtil}
+import org.gafis.utils.{Constant}
 import org.gafis.utils.elasticsearch.Utils.CallFactory
 import org.slf4j.LoggerFactory
 
@@ -62,9 +62,10 @@ class ManageIndexServiceImpl(dataAccessService: DataAccessService) extends Manag
   }
 
   override def updateDataToIndex(indexName: String,id:String,jsonStr: String): Unit = {
-    CallFactory.call(CallFactory.PUT
+    val str = CallFactory.call(CallFactory.PUT
       ,getRequestURL(Constant.UPDATE_DATA_TO_INDEX,indexName,indexName,id)
       ,jsonStr)
+    logger.info("ID:" + id +" Data update success, information:" + str)
   }
 
   private def getRequestURL(accessType:String,indexName:String,tableName:String = Constant.EMPTY,id:String = Constant.EMPTY): String ={

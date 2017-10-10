@@ -5,7 +5,6 @@ import gafis.internal.ExceptionUtil
 import gafis.service.elasticsearch.sync.SyncCronService
 import org.apache.tapestry5.ioc.annotations.PostInjection
 import org.apache.tapestry5.ioc.services.cron.{CronSchedule, PeriodicExecutor}
-import org.gafis.service.DatabaseService
 import org.gafis.service.elasticsearch.{DataAccessService, ManageIndexService}
 import org.gafis.utils.{Constant, JsonUtil}
 import stark.utils.services.LoggerSupport
@@ -13,8 +12,7 @@ import stark.utils.services.LoggerSupport
 /**
   * Created by yuchen 2017/09/04
   */
-class SyncCronServiceImpl(dataBaseService:DatabaseService
-                          ,manageIndexService:ManageIndexService
+class SyncCronServiceImpl(manageIndexService:ManageIndexService
                           ,dataAccessService:DataAccessService) extends SyncCronService with LoggerSupport{
 
   final val SYNC_BATCH_SIZE = 10
@@ -48,7 +46,7 @@ class SyncCronServiceImpl(dataBaseService:DatabaseService
     */
   override def doWork(): Unit = {
     var currentSeq = 0L
-      dataBaseService.querySourcesList.foreach{
+    dataAccessService.querySourcesList.foreach{
       t =>
         currentSeq = t.get("SEQ").get.toString.toLong
         syncData(t.get("SQL").get.toString
@@ -60,12 +58,12 @@ class SyncCronServiceImpl(dataBaseService:DatabaseService
 
   private def syncData(sql:String,currentSeq:Long,indexName:String,uuid:String): Unit ={
     val sqlStr = sql.split(";")
-    if(currentSeq < dataBaseService.queryMaxSeq(sqlStr(1))){
+    if(currentSeq < dataAccessService.queryMaxSeq(sqlStr(1))){
       val listHashMap = dataAccessService.queryGafisPerson(sqlStr(0),currentSeq + 1,SYNC_BATCH_SIZE)
       listHashMap.foreach{
         t =>
           manageIndexService.updateDataToIndex(indexName,t.get("id").get.toString,JsonUtil.mapToJSONStr(t))
-          dataBaseService.updateCurrentSeq(t.get("SEQ").get.toString.toLong,uuid)
+          dataAccessService.updateSooResourceSeq(t.get("SEQ").get.toString.toLong,uuid)
       }
     }
   }

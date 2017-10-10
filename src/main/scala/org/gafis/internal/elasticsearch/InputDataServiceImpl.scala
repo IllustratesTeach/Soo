@@ -16,9 +16,6 @@ class InputDataServiceImpl(dataAccessService: DataAccessService,manageIndexServi
     val executors = Executors.newFixedThreadPool(Math.min(Runtime.getRuntime.availableProcessors, 100))
   }
 
-
-
-
   override def inputDataToIndex(indexName:String,sql: String,uuid:String): Unit = {
     val executors = futureController.executors
     try{
@@ -40,5 +37,9 @@ class InputDataServiceImpl(dataAccessService: DataAccessService,manageIndexServi
     }finally {
       if(!executors.isShutdown) executors.shutdown
     }
+  }
+
+  override def initSooResource(indexName: String,sql:String): String = {
+    dataAccessService.initSooResource(indexName,sql)
   }
 }
